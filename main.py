@@ -6,10 +6,8 @@ import os
 import json
 import random
 import asyncio
-from discord_slash import SlashCommand, SlashContext
 client = commands.Bot(command_prefix=',')
 client.remove_command('help')
-slash = SlashCommand
 
 @client.event
 async def on_ready():
@@ -164,10 +162,5 @@ async def divide(ctx, *nums):
 @client.command()
 async def servers(ctx):
     await ctx.send(f"I am currently in `{len(client.guilds)}` servers!")
-
-@slash.slash(name="test")
-async def _test(ctx: SlashContext):
-    embed = discord.Embed(title="embed test")
-    await ctx.send(content="test", embeds=[embed])
-
+    
 client.run('ODAzODYyMTc5NTQ2NjYwOTM0.YBD8_g.ZSzwRSnAZQEbZT-0MYULN1vhJmA')
