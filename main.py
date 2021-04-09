@@ -6,6 +6,9 @@ import os
 import json
 import random
 import asyncio
+import logging
+import uuid
+from keep_alive import keep_alive
 client = commands.Bot(command_prefix=',')
 client.remove_command('help')
 
@@ -18,11 +21,7 @@ async def on_ready():
         activity=discord.Game('Type ",help" to get help! e'))
     print('----------------------------\nBot is connected to Discord')
 
-
 #MODERATION AND LOGS________________________
-
-
-
 
 @client.command()
 @commands.has_permissions(administrator=True)
@@ -100,6 +99,11 @@ async def say(ctx, *, args, amount=1):
     await ctx.channel.purge(limit=amount)
     await ctx.send(args)
 
+@client.event
+async def on_message(message):
+    if message.content.startswith('hehe'):
+        channel = message.channel
+        await channel.send("what's so funny, huh?")
 
 @client.command(name='spam',
                 help='Spams the input message for x ammount of times')
@@ -132,6 +136,15 @@ async def randomnumber(ctx, number):
     else:
         await ctx.send(str(arg))
 
+@client.command()
+async def servers(ctx):
+    await ctx.send(f"I am currently in `{len(client.guilds)}` servers!")
+
+@client.command()
+async def restart(ctx):
+    await ctx.send('Restarting...')
+    await ctx.bot.logout()
+    await ctx.bot.login('ODAzODYyMTc5NTQ2NjYwOTM0.YBD8_g.ZSzwRSnAZQEbZT-0MYULN1vhJmA', bot=True)
 
 #MATH____________________________
 
@@ -160,7 +173,63 @@ async def divide(ctx, *nums):
     await ctx.send(f'{operation} = `{eval(operation)}`')
 
 @client.command()
-async def servers(ctx):
-    await ctx.send(f"I am currently in `{len(client.guilds)}` servers!")
-    
+async def count(ctx):
+  await ctx.send('1')
+
+#HELP COMMAND_____________________
+
+
+@client.command(aliases=['h', 'commands'])
+async def help(ctx):
+  author = ctx.message.author
+  embed = discord.Embed(colour=discord.Colour.blue(),
+                        title="SUGGEST ME SOME COMMANDS!!!",
+                        description="e")
+
+  embed.set_author(name="Remember, my prefix is ,", icon_url="")
+  embed.set_image(url="")
+  embed.set_thumbnail(url="")
+  embed.add_field(name="help",
+                  value="DMs you with this embed\n Usage: \n`,dm <message here>`",
+                  inline=True)
+  embed.add_field(name="servers",
+                  value="Tells you how many servers i'm in\n Usage: \n`,servers`",
+                  inline=True)
+  embed.add_field(name="say",
+                  value="Says the thing you want me to say\n Usage: \n`,say <message here>`",
+                  inline=True)
+  embed.add_field(name="userinfo",
+                  value="Responds with the info of the stated user\n Usage: \n`,userinfo <id>`",
+                  inline=True)
+  embed.add_field(name="add",
+                  value="Adds the stated numbers\n Usage: \n`,add <number number>`",
+                  inline=True) 
+  embed.add_field(name="subtract",
+                  value="Subtracts the stated numbers\n Usage: \n`,subtract <number number>`",
+                  inline=True)
+  embed.add_field(name="multiply",
+                  value="Multiplies the stated numbers\n Usage: \n`,multiply <number number>`",
+                  inline=True)
+  embed.add_field(name="divide",
+                  value="Divides the stated numbers\n Usage: \n`,divide <number number>`",
+                  inline=True)
+  embed.set_footer(text="Coded by sgtbonsai (beta)")
+  await ctx.send('Sending you a DM...')
+  await author.send(embed=embed)
+
+#TESTS_________________________
+
+@client.command(pass_context=True)
+async def chnick(ctx, member: discord.Member, nick):
+    await member.edit(nick=nick)
+    await ctx.send(f'Nickname was changed for {member.mention} ')
+
+logger = logging.getLogger('discord')
+logger.setLevel(logging.DEBUG)
+handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+logger.addHandler(handler)
+
+
+keep_alive()    
 client.run('ODAzODYyMTc5NTQ2NjYwOTM0.YBD8_g.ZSzwRSnAZQEbZT-0MYULN1vhJmA')
